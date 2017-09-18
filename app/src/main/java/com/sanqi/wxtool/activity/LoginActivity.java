@@ -2,6 +2,8 @@ package com.sanqi.wxtool.activity;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
+import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -52,7 +54,7 @@ public class LoginActivity extends BaseActivity implements KeyboardWatcher.SoftK
     }
 
     @Override
-    protected void initView() {
+    protected void initView(Bundle savedInstanceState) {
         logo = (DrawableTextView) findViewById(R.id.logo);
         et_mobile = (EditText) findViewById(R.id.et_mobile);
         et_password = (EditText) findViewById(R.id.et_password);
@@ -217,6 +219,9 @@ public class LoginActivity extends BaseActivity implements KeyboardWatcher.SoftK
                     return;
                 }
                 showProgress(this,"我转，我转，我再转！");
+                startActivity(new Intent(this,FragmentActivity.class));
+                DismissDialog();
+                finish();
                 break;
         }
     }

@@ -8,4 +8,16 @@
         <attr name="drawableWidth" format="dimension" />
         <attr name="drawableHeight" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="MaterialHome">
+        <attr name="publishInfoBackground" format="reference|color" />
+        <attr name="searchIconColor" format="reference|color" />
+        <attr name="discoverSearchBg" format="reference|color" />
+    </declare-styleable>
+
+    <!-- 圆形头像控件-->
+    <declare-styleable name="CircleImageView">
+        <attr name="border_width" format="dimension"/>
+        <attr name="border_color2" format="color"/>
+    </declare-styleable>
 </resources>

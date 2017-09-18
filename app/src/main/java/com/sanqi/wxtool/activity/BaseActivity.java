@@ -17,14 +17,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
         init();
-        initView();
+        initView(savedInstanceState);
     }
 
     protected abstract int getLayoutId();
 
     protected abstract void init();
 
-    protected abstract void initView();
+    protected abstract void initView(Bundle savedInstanceState);
 
     private ProgressDialog mypDialog;  // 进度提示，请稍候
 
