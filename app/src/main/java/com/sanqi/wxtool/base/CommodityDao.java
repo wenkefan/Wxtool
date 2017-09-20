@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.sanqi.wxtool.data.SQLiteHelper;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ import java.util.Map;
  * Created by wenke on 2017/9/18.
  */
 
-public class CommodityDao {
+public class CommodityDao implements Serializable {
 
     private static final String TABLENAME= "Commodity";
 

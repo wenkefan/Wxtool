@@ -4,6 +4,8 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -17,16 +19,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sanqi.wxtool.base.LoginBase;
+import com.sanqi.wxtool.network.API;
+import com.sanqi.wxtool.network.OkHttpClientUtil;
+import com.sanqi.wxtool.network.OnSucceedListener;
+import com.sanqi.wxtool.util.ConstantUtil;
 import com.sanqi.wxtool.util.ToastUitl;
 import com.sanqi.wxtool.weight.DrawableTextView;
 import com.sanqi.wxtool.util.KeyboardWatcher;
 import com.sanqi.wxtool.R;
 
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+
 /**
  * Created by wenke on 2017/9/18.
  */
 
-public class LoginActivity extends BaseActivity implements KeyboardWatcher.SoftKeyboardStateListener, View.OnClickListener {
+public class LoginActivity extends BaseActivity implements KeyboardWatcher.SoftKeyboardStateListener, View.OnClickListener, OnSucceedListener {
 
     private DrawableTextView logo;
     private EditText et_mobile;
@@ -218,11 +228,54 @@ public class LoginActivity extends BaseActivity implements KeyboardWatcher.SoftK
                     ToastUitl.show("用户名或密码不能为空", Toast.LENGTH_LONG);
                     return;
                 }
-                showProgress(this,"我转，我转，我再转！");
-                startActivity(new Intent(this,FragmentActivity.class));
-                DismissDialog();
-                finish();
+                showProgress(this, "我转，我转，我再转！");
+
+                OkHttpClientUtil okhttp = OkHttpClientUtil.getInstance();
+                okhttp.setListener(this);
+                RequestBody formBody = new FormBody.Builder()
+                        .add("phone", userName)
+                        .add("password",pwd)
+                        .build();
+                okhttp.postAsynHttp(ConstantUtil.LoginSuFlag, API.LoginUrl,formBody, LoginBase.class);
+                String url = String.format(API.LoginUrl1,"156","fds");
+
+                Log.d("fwk",url);
+//                okhttp.getAsynHttp(ConstantUtil.LoginSuFlag, url,LoginBase.class);
+//                startActivity(new Intent(this, FragmentActivity.class));
+//                DismissDialog();
+//                finish();
                 break;
         }
+    }
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case ConstantUtil.LoginEr:
+                    ToastUitl.show("失败",Toast.LENGTH_LONG);
+                    break;
+                case ConstantUtil.LoginSu:
+                    ToastUitl.show("成功",Toast.LENGTH_LONG);
+                    DismissDialog();
+                    break;
+            }
+        }
+    };
+
+    @Override
+    public <T> void OnSucceed(int flag, T cla, String message) {
+        if (flag == ConstantUtil.LoginSuFlag){
+            if (cla == null){
+                mHandler.sendEmptyMessage(ConstantUtil.LoginEr);
+            } else {
+                mHandler.sendEmptyMessage(ConstantUtil.LoginSu);
+            }
+        }
+    }
+
+    @Override
+    public void Error() {
+
     }
 }

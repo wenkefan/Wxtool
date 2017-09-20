@@ -40,4 +40,6 @@ dependencies {
     //TabLayout
     compile 'com.flyco.tablayout:FlycoTabLayout_Lib:2.0.6@aar'
     compile 'com.android.support:support-v13:25.1.0'
+    compile 'com.squareup.okhttp3:okhttp:3.9.0'
+    compile 'com.google.code.gson:gson:2.5'
 }
