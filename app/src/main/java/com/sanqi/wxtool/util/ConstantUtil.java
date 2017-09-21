@@ -20,4 +20,6 @@ public class ConstantUtil {
   public static final int LoginSu = 101;
   //登陆请求失败
   public static final int LoginEr = 102;
+
+  public static final int CommSu = 201;
 }

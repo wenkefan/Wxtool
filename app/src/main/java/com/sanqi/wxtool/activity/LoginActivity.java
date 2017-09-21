@@ -21,7 +21,8 @@ import android.widget.Toast;
 
 import com.sanqi.wxtool.base.LoginBase;
 import com.sanqi.wxtool.network.API;
-import com.sanqi.wxtool.network.OkHttpClientUtil;
+import com.sanqi.wxtool.network.Okhttp;
+import com.sanqi.wxtool.network.OkhttpLogin;
 import com.sanqi.wxtool.network.OnSucceedListener;
 import com.sanqi.wxtool.util.ConstantUtil;
 import com.sanqi.wxtool.util.ToastUitl;
@@ -228,26 +229,24 @@ public class LoginActivity extends BaseActivity implements KeyboardWatcher.SoftK
                     ToastUitl.show("用户名或密码不能为空", Toast.LENGTH_LONG);
                     return;
                 }
-                showProgress(this, "我转，我转，我再转！");
+                showProgress(this, "正在登陆。。。");
 
-                OkHttpClientUtil okhttp = OkHttpClientUtil.getInstance();
+                OkhttpLogin okhttp = new OkhttpLogin();
                 okhttp.setListener(this);
                 RequestBody formBody = new FormBody.Builder()
                         .add("phone", userName)
                         .add("password",pwd)
                         .build();
                 okhttp.postAsynHttp(ConstantUtil.LoginSuFlag, API.LoginUrl,formBody, LoginBase.class);
-                String url = String.format(API.LoginUrl1,"156","fds");
-
-                Log.d("fwk",url);
-//                okhttp.getAsynHttp(ConstantUtil.LoginSuFlag, url,LoginBase.class);
-//                startActivity(new Intent(this, FragmentActivity.class));
-//                DismissDialog();
-//                finish();
+                DismissDialog();
+                startActivity();
                 break;
         }
     }
-
+    private void startActivity(){
+        startActivity(new Intent(this,FragmentActivity.class));
+        finish();
+    }
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -258,6 +257,7 @@ public class LoginActivity extends BaseActivity implements KeyboardWatcher.SoftK
                 case ConstantUtil.LoginSu:
                     ToastUitl.show("成功",Toast.LENGTH_LONG);
                     DismissDialog();
+                    startActivity();
                     break;
             }
         }

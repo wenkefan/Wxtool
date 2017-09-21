@@ -13,4 +13,6 @@ public class API {
 
     public static final String LoginUrl1 = LoginUrl + "?phone=%1$s&password=%2$s";
 
+    public static final String Commodity = Api + "/test";
+
 }

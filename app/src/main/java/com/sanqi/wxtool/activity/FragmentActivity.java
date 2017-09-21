@@ -1,6 +1,8 @@
 package com.sanqi.wxtool.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -8,19 +10,28 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.sanqi.wxtool.R;
+import com.sanqi.wxtool.base.CommodityBase;
+import com.sanqi.wxtool.base.CommodityDao;
 import com.sanqi.wxtool.fragment.HomeFragemnt;
 import com.sanqi.wxtool.fragment.SettingFragment;
+import com.sanqi.wxtool.network.API;
+import com.sanqi.wxtool.network.OkHttpCommodity;
+import com.sanqi.wxtool.network.OnSucceedListener;
+import com.sanqi.wxtool.util.ConstantUtil;
 import com.sanqi.wxtool.weight.CircleImageView;
+
+import java.util.List;
 
 /**
  * Created by 范文轲 on 2017/9/18.
  */
 
-public class FragmentActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class FragmentActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, OnSucceedListener {
 
     private NavigationView mNavigationView;
     private Toolbar mToolbar;
@@ -53,10 +64,28 @@ public class FragmentActivity extends BaseActivity implements NavigationView.OnN
                 homeFragemnt,
                 settingFragment
         };
+        showProgress(FragmentActivity.this,"努力加载中...");
+        RequestInterface(homeFragemnt);
+//        getSupportFragmentManager().beginTransaction()
+//                .replace(R.id.content, homeFragemnt)
+//                .commit();
+    }
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content, homeFragemnt)
-                .commit();
+    private void RequestInterface(HomeFragemnt homeFragemnt) {
+        CommodityDao dao = CommodityDao.getInstance(this);
+
+        List<CommodityBase.NTbkItemBean> list = dao.query(0, 0);
+
+        if (list.size() == 0) {
+            OkHttpCommodity okHttpCommodity = new OkHttpCommodity();
+            okHttpCommodity.setListener(this);
+            okHttpCommodity.getAsynHttp(ConstantUtil.CommSu, API.Commodity,CommodityBase.class);
+        } else {
+            DismissDialog();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.content, homeFragemnt)
+                    .commit();
+        }
     }
 
     @Override
@@ -76,6 +105,7 @@ public class FragmentActivity extends BaseActivity implements NavigationView.OnN
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
     }
+
     //设置侧滑
     private void setNavigationView() {
 
@@ -117,5 +147,42 @@ public class FragmentActivity extends BaseActivity implements NavigationView.OnN
         }
         trx.show(fragments[index]).commit();
         currentTabIndex = index;
+    }
+
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == -1){
+                DismissDialog();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content, HomeFragemnt.newInstance())
+                        .commit();
+            }
+        }
+    };
+
+    @Override
+    public <T> void OnSucceed(int flag, T cla, String message) {
+        Log.d("fan","请求成功");
+        if (flag == ConstantUtil.CommSu){
+            final CommodityBase base = (CommodityBase) cla;
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    CommodityDao dao = CommodityDao.getInstance(FragmentActivity.this);
+                    int flag = dao.insert(base);
+                    if (flag == -1){
+                        mHandler.sendEmptyMessage(-1);
+                    }
+                }
+            });
+            thread.start();
+
+        }
+    }
+
+    @Override
+    public void Error() {
+
     }
 }

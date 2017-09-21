@@ -47,14 +47,14 @@ public class CommodityDao implements Serializable {
      *
      * @param list
      */
-    public void insert(List<CommodityBase> list) {
+    public int insert(CommodityBase list) {
         SQLiteDatabase db = openHelper.getWritableDatabase();
-        for (CommodityBase base : list) {
+        for (CommodityBase.NTbkItemBean base : list.getN_tbk_item()) {
             try {
                 db.beginTransaction();
                 long num_iid = base.getNum_iid();
                 String item_url = base.getItem_url();
-                String picr_ur = base.getPicr_ur();
+                String pict_url = base.getPict_url();
                 String provcity = base.getProvcity();
                 String reserve_price = base.getReserve_price();
                 String title = base.getTitle();
@@ -63,16 +63,16 @@ public class CommodityDao implements Serializable {
                 //额外添加的两个字段
                 int not_uploaded = 0;//未上传  0/1
                 int uploaded = 0;//已上传
-                db.execSQL("insert into AttendanceRecord(item_url,num_iid,picr_ur,provcity,reserve_price,title,user_type,zk_final_price,not_uploaded,uploaded)values(?,?,?,?,?,?,?,?,?,?)",
-                        new Object[]{num_iid,item_url,picr_ur,provcity,reserve_price,title,user_type,zk_final_price,not_uploaded,uploaded});
+                db.execSQL("insert into Commodity(num_iid,item_url,pict_url,provcity,reserve_price,title,user_type,zk_final_price,not_uploaded,uploaded)values(?,?,?,?,?,?,?,?,?,?)",
+                        new Object[]{num_iid,item_url,pict_url,provcity,reserve_price,title,user_type,zk_final_price,not_uploaded,uploaded});
                 db.setTransactionSuccessful();
             } catch (SQLException e) {
                 e.printStackTrace();
-            } finally {
-                db.endTransaction();
             }
-            db.close();
         }
+        db.endTransaction();
+        db.close();
+        return -1;
     }
 
     /**
@@ -89,13 +89,13 @@ public class CommodityDao implements Serializable {
      *
      * @param base
      */
-    public void insert(CommodityBase base) {
+    public void insert(CommodityBase.NTbkItemBean base) {
         SQLiteDatabase db = openHelper.getWritableDatabase();
         try {
             db.beginTransaction();
             long num_iid = base.getNum_iid();
             String item_url = base.getItem_url();
-            String picr_ur = base.getPicr_ur();
+            String pict_url = base.getPict_url();
             String provcity = base.getProvcity();
             String reserve_price = base.getReserve_price();
             String title = base.getTitle();
@@ -104,8 +104,8 @@ public class CommodityDao implements Serializable {
             //额外添加的两个字段
             int not_uploaded = 0;//未上传  0/1
             int uploaded = 0;//已上传
-            db.execSQL("insert into AttendanceRecord(item_url,num_iid,picr_ur,provcity,reserve_price,title,user_type,zk_final_price,not_uploaded,uploaded)values(?,?,?,?,?,?,?,?,?,?)",
-                    new Object[]{num_iid,item_url,picr_ur,provcity,reserve_price,title,user_type,zk_final_price,not_uploaded,uploaded});
+            db.execSQL("insert into AttendanceRecord(item_url,num_iid,pict_url,provcity,reserve_price,title,user_type,zk_final_price,not_uploaded,uploaded)values(?,?,?,?,?,?,?,?,?,?)",
+                    new Object[]{num_iid,item_url,pict_url,provcity,reserve_price,title,user_type,zk_final_price,not_uploaded,uploaded});
             db.setTransactionSuccessful();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -121,17 +121,17 @@ public class CommodityDao implements Serializable {
      * @param not_uploaded
      * @param uploaded
      */
-    public List<CommodityBase> query(int not_uploaded, int uploaded) {
+    public List<CommodityBase.NTbkItemBean> query(int not_uploaded, int uploaded) {
         SQLiteDatabase db = openHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from" + TABLENAME +
-                 "not_uploaded = ? and uploaded = ?",
+        Cursor cursor = db.rawQuery("select * from " + TABLENAME +
+                 " where not_uploaded = ? and uploaded = ?",
                 new String[]{String.valueOf(not_uploaded), String.valueOf(uploaded)});
-        List<CommodityBase> bases = new ArrayList<>();
+        List<CommodityBase.NTbkItemBean> bases = new ArrayList<>();
         if (cursor.moveToNext()){
-            CommodityBase base = new CommodityBase();
+            CommodityBase.NTbkItemBean base = new CommodityBase.NTbkItemBean();
             base.setNum_iid(cursor.getLong(cursor.getColumnIndex("num_iid")));
             base.setItem_url(cursor.getString(cursor.getColumnIndex("item_url")));
-            base.setPicr_ur(cursor.getString(cursor.getColumnIndex("picr_ur")));
+            base.setPict_url(cursor.getString(cursor.getColumnIndex("pict_url")));
             base.setProvcity(cursor.getString(cursor.getColumnIndex("provcity")));
             base.setReserve_price(cursor.getString(cursor.getColumnIndex("reserve_price")));
             base.setTitle(cursor.getString(cursor.getColumnIndex("title")));
