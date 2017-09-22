@@ -14,6 +14,7 @@ import com.sanqi.wxtool.R;
 import com.sanqi.wxtool.adapter.CommodityAdapter;
 import com.sanqi.wxtool.base.CommodityBase;
 import com.sanqi.wxtool.base.CommodityDao;
+import com.sanqi.wxtool.util.ConstantUtil;
 
 import java.util.List;
 
@@ -100,7 +101,11 @@ public class HomeSimpleFragment extends BaseFragment {
             @Override
             public void run() {
                 CommodityDao dao = CommodityDao.getInstance(getContext());
-                list = dao.query(0,0);
+                if (type.equals(ConstantUtil.HOME)) {
+                    list = dao.query(0, 0);
+                } else if (type.equals(ConstantUtil.SETTING)){
+                    list = dao.query(0,1);
+                }
                 Log.d("fan",list.size()+"---------------size");
                 mHandler.sendEmptyMessage(1);
             }

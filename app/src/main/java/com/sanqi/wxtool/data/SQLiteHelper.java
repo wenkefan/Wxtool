@@ -42,7 +42,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table "+ TABLENAME +"(num_iid integer primary key,item_url varchar(100),pict_url varchar(100),provcity varchar(50),reserve_price varcher(20),title varchar(100),user_type integer,zk_final_price varchar(20),not_uploaded integer,uploaded integer )");
+        db.execSQL("create table "+ TABLENAME +"(num_iid integer,item_url varchar(100),pict_url varchar(100),provcity varchar(50),reserve_price varcher(20),title varchar(100),user_type integer,zk_final_price varchar(20),not_uploaded integer,uploaded integer )");
     }
 
     @Override

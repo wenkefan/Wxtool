@@ -75,7 +75,6 @@ public class FragmentActivity extends BaseActivity implements NavigationView.OnN
         CommodityDao dao = CommodityDao.getInstance(this);
 
         List<CommodityBase.NTbkItemBean> list = dao.query(0, 0);
-
         if (list.size() == 0) {
             OkHttpCommodity okHttpCommodity = new OkHttpCommodity();
             okHttpCommodity.setListener(this);
@@ -156,7 +155,7 @@ public class FragmentActivity extends BaseActivity implements NavigationView.OnN
                 DismissDialog();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.content, HomeFragemnt.newInstance())
-                        .commit();
+                        .commitAllowingStateLoss();
             }
         }
     };

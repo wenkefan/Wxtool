@@ -239,7 +239,7 @@ public class LoginActivity extends BaseActivity implements KeyboardWatcher.SoftK
                         .build();
                 okhttp.postAsynHttp(ConstantUtil.LoginSuFlag, API.LoginUrl,formBody, LoginBase.class);
                 DismissDialog();
-                startActivity();
+//                startActivity();
                 break;
         }
     }
@@ -252,10 +252,10 @@ public class LoginActivity extends BaseActivity implements KeyboardWatcher.SoftK
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case ConstantUtil.LoginEr:
-                    ToastUitl.show("失败",Toast.LENGTH_LONG);
+                    ToastUitl.show("登录失败",Toast.LENGTH_LONG);
                     break;
                 case ConstantUtil.LoginSu:
-                    ToastUitl.show("成功",Toast.LENGTH_LONG);
+                    ToastUitl.show("登录成功",Toast.LENGTH_LONG);
                     DismissDialog();
                     startActivity();
                     break;

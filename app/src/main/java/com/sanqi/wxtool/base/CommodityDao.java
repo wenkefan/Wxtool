@@ -63,14 +63,15 @@ public class CommodityDao implements Serializable {
                 //额外添加的两个字段
                 int not_uploaded = 0;//未上传  0/1
                 int uploaded = 0;//已上传
-                db.execSQL("insert into Commodity(num_iid,item_url,pict_url,provcity,reserve_price,title,user_type,zk_final_price,not_uploaded,uploaded)values(?,?,?,?,?,?,?,?,?,?)",
+                db.execSQL("insert into "+TABLENAME+"(num_iid,item_url,pict_url,provcity,reserve_price,title,user_type,zk_final_price,not_uploaded,uploaded)values(?,?,?,?,?,?,?,?,?,?)",
                         new Object[]{num_iid,item_url,pict_url,provcity,reserve_price,title,user_type,zk_final_price,not_uploaded,uploaded});
                 db.setTransactionSuccessful();
             } catch (SQLException e) {
                 e.printStackTrace();
+            } finally {
+                db.endTransaction();
             }
         }
-        db.endTransaction();
         db.close();
         return -1;
     }
@@ -127,19 +128,21 @@ public class CommodityDao implements Serializable {
                  " where not_uploaded = ? and uploaded = ?",
                 new String[]{String.valueOf(not_uploaded), String.valueOf(uploaded)});
         List<CommodityBase.NTbkItemBean> bases = new ArrayList<>();
-        if (cursor.moveToNext()){
-            CommodityBase.NTbkItemBean base = new CommodityBase.NTbkItemBean();
-            base.setNum_iid(cursor.getLong(cursor.getColumnIndex("num_iid")));
-            base.setItem_url(cursor.getString(cursor.getColumnIndex("item_url")));
-            base.setPict_url(cursor.getString(cursor.getColumnIndex("pict_url")));
-            base.setProvcity(cursor.getString(cursor.getColumnIndex("provcity")));
-            base.setReserve_price(cursor.getString(cursor.getColumnIndex("reserve_price")));
-            base.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-            base.setUser_type(cursor.getInt(cursor.getColumnIndex("user_type")));
-            base.setZk_final_price(cursor.getString(cursor.getColumnIndex("zk_final_price")));
-            base.setNot_uploaded(cursor.getInt(cursor.getColumnIndex("not_uploaded")));
-            base.setUploaded(cursor.getInt(cursor.getColumnIndex("uploaded")));
-            bases.add(base);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                CommodityBase.NTbkItemBean base = new CommodityBase.NTbkItemBean();
+                base.setNum_iid(cursor.getLong(cursor.getColumnIndex("num_iid")));
+                base.setItem_url(cursor.getString(cursor.getColumnIndex("item_url")));
+                base.setPict_url(cursor.getString(cursor.getColumnIndex("pict_url")));
+                base.setProvcity(cursor.getString(cursor.getColumnIndex("provcity")));
+                base.setReserve_price(cursor.getString(cursor.getColumnIndex("reserve_price")));
+                base.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                base.setUser_type(cursor.getInt(cursor.getColumnIndex("user_type")));
+                base.setZk_final_price(cursor.getString(cursor.getColumnIndex("zk_final_price")));
+                base.setNot_uploaded(cursor.getInt(cursor.getColumnIndex("not_uploaded")));
+                base.setUploaded(cursor.getInt(cursor.getColumnIndex("uploaded")));
+                bases.add(base);
+            }
         }
         return bases;
     }

@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.sanqi.wxtool.R;
 import com.sanqi.wxtool.base.CommodityBase;
 import com.sanqi.wxtool.weight.RatioImageView;
@@ -39,7 +41,15 @@ public class CommodityAdapter extends AbsRecyclerViewAdapter {
     public void onBindViewHolder(ClickableViewHolder holder, int position) {
         if (holder instanceof ItemViewHolder){
             ItemViewHolder holde = (ItemViewHolder) holder;
+            Glide.with(getContext())
+                    .load(commodityList.get(position).getPict_url())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.placeholder_image)
+                    .into(holde.rationImageView);
             holde.rationImageView.setTag(R.string.app_name,commodityList.get(position).getPict_url());
+            holde.title.setText(commodityList.get(position).getTitle());
+            holde.introduce.setText(commodityList.get(position).getZk_final_price());
+            holde.sendOut.setText("未发送");
         }
         super.onBindViewHolder(holder, position);
     }
